@@ -25,6 +25,7 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String relativeTime;
+    public String mediaUrl;
 
     public Tweet() {}
 
@@ -34,6 +35,14 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.relativeTime = getRelativeTimeAgo(tweet.createdAt);
+        JSONObject entities = jsonObject.getJSONObject("entities");
+        if (entities.has("media")) {
+            tweet.mediaUrl = entities.getJSONArray("media").getJSONObject(0).getString("media_url_https");
+        } else {
+            tweet.mediaUrl = "";
+        }
+        // display_url --> URL of the media to display to clients
+        // expanded_url --> links to media display page
         return tweet;
     }
 

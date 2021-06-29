@@ -11,11 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterInside;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -48,19 +51,32 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         //
     }
 
+    // Clean all elements of the recycler
+    public void clear() {
+        tweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Tweet> list) {
+        tweets.addAll(list);
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public int getItemCount() {
         return tweets.size();
     }
 
-    // Define the viewholder
+    // Define the view holder
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
         TextView tvRelativeTime;
+        ImageView ivMediaEntity;
 
         // this view holder and the itemView passed in reps one row
         public ViewHolder(@NonNull @NotNull View itemView) {
@@ -69,6 +85,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvRelativeTime = itemView.findViewById(R.id.tvRelativeTime);
+            ivMediaEntity = itemView.findViewById(R.id.ivMediaEntity);
         }
 
         // take out the attributes of the tweet and assign them to the different views
@@ -76,7 +93,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
             tvRelativeTime.setText(tweet.relativeTime);
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+            Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
+            Glide.with(context).load(tweet.mediaUrl).transform(new CenterInside(), new RoundedCornersTransformation(25, 5)).into(ivMediaEntity);
         }
     }
 }
