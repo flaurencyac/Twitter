@@ -6,6 +6,11 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+
+        <!-- the themes don't show up in the Compose Activity -->
+        <item name="colorControlNormal">#FFFFFF</item>
+        <item name="colorControlActivated">#2196F3</item>
+        <item name="colorControlHighlight">#2196F3</item>
     </style>
 
     <!-- Application theme. -->

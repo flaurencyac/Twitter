@@ -5,6 +5,7 @@ import android.text.format.DateUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,11 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+
+// Never forget! To use a parcel:
+// 1) @Parcel decorator to the class model
+// 2) add the two lines of implementation/annotationProcessor into build.gradle (app)
+// 3) make a default constructor for the class model
+// NOTICE: B/c Tweet contains User model, repeat steps 1 & 3 for User class
+@Parcel
 public class Tweet {
     public String body;
     public String createdAt;
     public User user;
     public String relativeTime;
+
+    public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
