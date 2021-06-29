@@ -3,9 +3,13 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.RelativeLayout;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -31,7 +35,13 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-         client = TwitterApp.getRestClient(this);
+        // Find the toolbar view inside the activity layout
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+
+        client = TwitterApp.getRestClient(this);
 
          // Find the recycler view
         rvTweets = findViewById(R.id.rvTweets);
@@ -43,6 +53,40 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setAdapter(adapter);
 
          populateHomeTimeline();
+    }
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_activity_timeline, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_logout);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        // if the user taps "logout"
+        if (id == R.id.action_logout) {
+            Log.i(TAG, "logout");
+            userLogout();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void userLogout() {
+        // forget who is logged in
+        client.clearAccessToken();
+        // navigate backwards to login screen
+        finish();
     }
 
     private void populateHomeTimeline() {
