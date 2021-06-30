@@ -52,7 +52,7 @@ GIF created with [Kap](https://getkap.co/).
 
 ## Notes
 
-Describe any challenges encountered while building the app.
+My TA, Aldo Socarros, is listed as a contributor, because for the "Pre-Work and Setup" module, my TAs and I–for the life of us–could not figure out why my API keys and my OAuth would not work. What happened was that my app would open, go to the Login Activity, go to the Authorization page on Google Chrome, and then it would display "successfully authorized OAuth", but when I returned to my app it immediately told me to repeat autohorization on Chrome. The cycle went on and on, and there wasn't a way to actually "log in." When we used Logcat the error it threw us was that "Log" (the method itself) was not resolvable. We individually looked through all of the config files/settings and my Twitter Developer account settings and found nothing wrong, so next, we individually redid the setup/config and while my TA's worked, mine did not! We decided that since we'd taken upwards of 2 hours on troubleshooting that it would be okay for me to clone his repo (which just had the pre-work configurations/setup) and get on with the first user story. Oddly enough, after I cloned his repo the same issue happened until I used his API keys.
 
 ## Open-source libraries used
 
