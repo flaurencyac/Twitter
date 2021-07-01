@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,13 @@ import com.bumptech.glide.load.resource.bitmap.CenterInside;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import org.jetbrains.annotations.NotNull;
+import org.parceler.Parcels;
 
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.codepath.apps.restclienttemplate.TimelineActivity.TWEET_POS;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -47,8 +51,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         Tweet tweet = tweets.get(position);
         // Bind the tweet with the view holder
         holder.bind(tweet);
-
-        //
     }
 
     // Clean all elements of the recycler
@@ -63,15 +65,14 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
-
     @Override
     public int getItemCount() {
         return tweets.size();
     }
 
     // Define the view holder
-    public class ViewHolder extends RecyclerView.ViewHolder {
-
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        // declare for each view
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
@@ -86,6 +87,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             tvRelativeTime = itemView.findViewById(R.id.tvRelativeTime);
             ivMediaEntity = itemView.findViewById(R.id.ivMediaEntity);
+            itemView.setOnClickListener(this);
         }
 
         // take out the attributes of the tweet and assign them to the different views
@@ -95,6 +97,24 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRelativeTime.setText(tweet.relativeTime);
             Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
             Glide.with(context).load(tweet.mediaUrl).transform(new CenterInside(), new RoundedCornersTransformation(25, 5)).into(ivMediaEntity);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // Gets item position
+            int position = getAdapterPosition();
+            // make sure the position is valid, i.e. actually exists in the view
+            if (position != RecyclerView.NO_POSITION) {
+                // get the tweet at the position, this won't work if the class is static
+                Tweet tweet = tweets.get(position);
+                // create intent for the new activity
+                Intent intent = new Intent(context, DetailActivity.class);
+                // serialize the tweet using parceler
+                intent.putExtra("tweetObj", Parcels.wrap(tweet));
+                intent.putExtra(TWEET_POS, position);
+                // show the activity
+                ((TimelineActivity) context).startActivityForResult(intent, ((TimelineActivity) context).REQUEST_CODE_FAVORITE);
+            }
         }
     }
 }

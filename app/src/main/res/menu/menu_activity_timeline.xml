@@ -2,13 +2,22 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/action_compose"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="Compose"
-        app:showAsAction="always" />
+    <!-- Replaced toolbar compose action with fab -->
+<!--    <item-->
+<!--        android:id="@+id/action_compose"-->
+<!--        android:icon="@drawable/vector_compose_fab"-->
+<!--        android:title="Compose"-->
+<!--        app:showAsAction="always" />-->
+
     <item
         android:id="@+id/action_logout"
         android:title="Logout"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/miActionProgress"
+        android:title="Loading..."
+        android:visible="false"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        app:actionLayout="@layout/action_view_progress" />
 </menu>

@@ -25,16 +25,32 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String relativeTime;
+    public String timestamp;
+    public String datestamp;
     public String mediaUrl;
+    public long id;
+    public int retweetCount;
+    public int favoriteCount;
+    public boolean favorited;
+    public boolean retweeted;
+
 
     public Tweet() {}
 
+    // obtain data from json and define the variables
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.relativeTime = getRelativeTimeAgo(tweet.createdAt);
+        tweet.timestamp = getTimestamp(tweet.createdAt);
+        tweet.datestamp = getDatestamp(tweet.createdAt);
+        tweet.id = jsonObject.getLong("id");
+        tweet.retweetCount = jsonObject.getInt("retweet_count");
+        tweet.favoriteCount = jsonObject.getInt("favorite_count");
+        tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
         JSONObject entities = jsonObject.getJSONObject("entities");
         if (entities.has("media")) {
             tweet.mediaUrl = entities.getJSONArray("media").getJSONObject(0).getString("media_url_https");
@@ -55,19 +71,37 @@ public class Tweet {
     }
 
     // you can use static methods even if you don't have a instance of the class that the method belongs to
-    public static String getRelativeTimeAgo(String jsonTimestamp) {
+    public static String getRelativeTimeAgo(String rawString) {
         String tweetFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyyy";
         SimpleDateFormat sf = new SimpleDateFormat(tweetFormat, Locale.ENGLISH);
         sf.setLenient(true);
 
         String relativeDate = "";
         try {
-            long dateMillis = sf.parse(jsonTimestamp).getTime();
+            long dateMillis = sf.parse(rawString).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis, System.currentTimeMillis(),
                     DateUtils.SECOND_IN_MILLIS).toString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return relativeDate;
+    }
+
+    public static String getTimestamp(String rawString) {
+        Integer hour = Integer.parseInt(rawString.substring(11,13));
+        Integer minutes = Integer.parseInt(rawString.substring(14,16));
+        if (hour > 12){
+            hour = hour % 12;
+            return String.format("%d:%d PM",hour, minutes);
+        } else {
+            return String.format("%d:%d AM",hour, minutes);
+        }
+    }
+
+    public static String getDatestamp(String rawString) {
+        String month = rawString.substring(4,7);
+        String day = rawString.substring(8,10);
+        String year = rawString.substring(rawString.length()-4);
+        return String.format("%s %s, %s", month, day, year);
     }
 }
