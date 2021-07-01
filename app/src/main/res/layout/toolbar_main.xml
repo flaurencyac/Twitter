@@ -15,25 +15,28 @@
         android:background="#ff1da1f2"
         android:minHeight="?attr/actionBarSize"
         android:theme="@style/ToolbarTheme"
-        app:contentInsetStart="0dp"
+        app:contentInsetStart="5dp"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:titleTextAppearance="@style/Toolbar.TitleText">
 
-        <ImageView
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            app:srcCompat="@drawable/ic_launcher_twitter" />
-
         <TextView
+            android:id="@+id/tvTwitterTitle"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/toolbar"
+            android:layout_marginStart="5dp"
             android:text="Twitter"
             android:textAppearance="@style/Toolbar.TitleText"
             android:textSize="25sp" />
 
+        <ImageView
+            android:id="@+id/ivBird"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="110dp"
+            android:layout_toEndOf="@id/ivBird"
+            app:srcCompat="@drawable/ic_vector_bird" />
 
     </androidx.appcompat.widget.Toolbar>
-
 
 </RelativeLayout>

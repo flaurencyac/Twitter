@@ -6,12 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".ComposeActivity">
 
+    <ImageButton
+        android:id="@+id/ibClose"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:backgroundTint="#00FFFFFF"
+        app:srcCompat="@drawable/ic_vector_close" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tiLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ibClose"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="10dp"
         app:counterEnabled="true"
         app:counterMaxLength="140"
         app:counterOverflowTextAppearance="@style/Toolbar.TitleText"
@@ -19,19 +32,20 @@
 
         <EditText
             android:id="@+id/etCompose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="366dp"
+            android:layout_height="127dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="5dp"
             android:ems="10"
             android:gravity="start|top"
             android:hint="What's happening?"
             android:inputType="textMultiLine"
             android:minLines="5"
             android:textColorHighlight="#ccf2ff" />
-
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -40,11 +54,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tiLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="144dp"
         android:backgroundTint="#2196F3"
         android:text="@string/tweet"
         android:textColor="#FFFFFF" />
-
-
 </RelativeLayout>

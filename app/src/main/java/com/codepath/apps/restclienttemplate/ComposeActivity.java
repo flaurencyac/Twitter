@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityComposeBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -21,45 +23,60 @@ import org.parceler.Parcels;
 import okhttp3.Headers;
 
 public class ComposeActivity extends AppCompatActivity {
-
-    // TODO Android snack bar replace toasts to tell the user about errors
-
     public static final int MAX_TWEET_LENGTH = 140;
     public static final String TAG = "ComposeActivity";
 
+    // declare views
     EditText etCompose;
     Button btnTweet;
     TwitterClient client;
     Tweet tweet;
     Boolean replyToTweet;
+    ImageButton ibClose;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_compose);
+        ActivityComposeBinding binding = ActivityComposeBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
+        // define vars and find views
         client = TwitterApp.getRestClient(this);
-
-        etCompose = findViewById(R.id.etCompose);
-        btnTweet = findViewById(R.id.btnTweet);
-
         replyToTweet = false;
+        etCompose = binding.etCompose;
+        btnTweet = binding.btnTweet;
+        ibClose = binding.ibClose;
 
+        // unwrap parcel from Details Activity/Timeline Activity
         tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
+        // if the tweet in the parcel is not null, this means that we are replying to a tweet
         if (tweet != null) {
+            // set text to show that the user is replying to another Twitter user's tweet
             etCompose.setText("Replying to @"+tweet.user.screenName + " ");
             replyToTweet = true;
         }
 
-        // Set click listener on button
+        // set click listener on close out button
+        ibClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        // Set click listener on tweet button
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // capture tweet contents
                 String tweetContent = etCompose.getText().toString();
+                // if the tweet is empty, the user isn't allowed to tweet an empty tweet, returned to compose activity
                 if (tweetContent.isEmpty()) {
                     Toast.makeText(ComposeActivity.this, "Sorry your tweet cannot be empty", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // if the tweet is longer than the max tweet length they aren't allowed to tweet it, returned to compose activity
                 if (tweetContent.length()>MAX_TWEET_LENGTH) {
                     Toast.makeText(ComposeActivity.this, "Sorry, your tweet is too long", Toast.LENGTH_SHORT).show();
                     return;
@@ -69,7 +86,8 @@ public class ComposeActivity extends AppCompatActivity {
                     client.replyTweet(tweet.id, tweetContent, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
-                            Log.i(TAG, "onSuccess to reply to tweet");
+                            Log.i(TAG, "Successfully replied to tweet");
+                            // let user know that they successfully replied to the tweet
                             Toast.makeText(ComposeActivity.this, "Replied to tweet", Toast.LENGTH_SHORT).show();
                             try {
                                 Tweet tweet = Tweet.fromJson(json.jsonObject);
@@ -81,7 +99,7 @@ public class ComposeActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                            Log.e(TAG, "onFailure to reply to tweet", throwable);
+                            Log.e(TAG, "Failed to reply to tweet", throwable);
                         }
                     });
                 }
@@ -95,6 +113,7 @@ public class ComposeActivity extends AppCompatActivity {
                             try {
                                 Tweet tweet = Tweet.fromJson(json.jsonObject);
                                 Log.i(TAG, "Published tweet:" + tweet.body);
+                                // create intent to send into the timeline so the adapter can update the first viewholder with new tweet
                                 Intent intent = new Intent();
                                 intent.putExtra("tweet", Parcels.wrap(tweet));
                                 // Set result code and bundle data for response
@@ -111,7 +130,6 @@ public class ComposeActivity extends AppCompatActivity {
                         }
                     });
                 }
-
             }
         });
     }

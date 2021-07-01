@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
+import com.codepath.apps.restclienttemplate.databinding.ActivityDetailBinding;
+import com.codepath.apps.restclienttemplate.databinding.ActivityLoginBinding;
 import com.codepath.apps.restclienttemplate.models.SampleModel;
 import com.codepath.apps.restclienttemplate.models.SampleModelDao;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
@@ -18,7 +20,9 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
+		ActivityLoginBinding binding = ActivityLoginBinding.inflate(getLayoutInflater());
+		View view = binding.getRoot();
+		setContentView(view);
 
 		final SampleModel sampleModel = new SampleModel();
 		sampleModel.setName("CodePath");
@@ -45,7 +49,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
-		Log.i("boogity", "Login success!");
 		Intent i = new Intent(this, TimelineActivity.class);
 		startActivity(i);
 	}

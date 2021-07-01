@@ -62,6 +62,7 @@ public class Tweet {
         return tweet;
     }
 
+    // this method loops through all the objects in the json array creating a tweet object from each obj
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
          for (int i = 0; i < jsonArray.length(); i++) {
@@ -70,7 +71,8 @@ public class Tweet {
          return tweets;
     }
 
-    // you can use static methods even if you don't have a instance of the class that the method belongs to
+    // you can use static methods even if you don't have an instance of the class that the method belongs to
+    // method that gets the raw JSON string data and obtains the relative time form a user's current time
     public static String getRelativeTimeAgo(String rawString) {
         String tweetFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyyy";
         SimpleDateFormat sf = new SimpleDateFormat(tweetFormat, Locale.ENGLISH);
@@ -87,6 +89,7 @@ public class Tweet {
         return relativeDate;
     }
 
+    // gets raw JSON string and uses substring to extract the time in HH:MM AM or PM
     public static String getTimestamp(String rawString) {
         Integer hour = Integer.parseInt(rawString.substring(11,13));
         Integer minutes = Integer.parseInt(rawString.substring(14,16));
@@ -98,6 +101,7 @@ public class Tweet {
         }
     }
 
+    // gets raw JSON string and uses substring to extract the date in MMM DD YYYY
     public static String getDatestamp(String rawString) {
         String month = rawString.substring(4,7);
         String day = rawString.substring(8,10);

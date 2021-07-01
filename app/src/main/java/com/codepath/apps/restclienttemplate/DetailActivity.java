@@ -2,8 +2,6 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,14 +9,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterInside;
+import com.codepath.apps.restclienttemplate.adapters.FragmentAdapter;
+import com.codepath.apps.restclienttemplate.databinding.ActivityDetailBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
+import com.google.android.material.tabs.TabLayout;
 
 import org.parceler.Parcels;
 
@@ -29,9 +31,6 @@ import static com.codepath.apps.restclienttemplate.TimelineActivity.TWEET_POS;
 
 public class DetailActivity extends AppCompatActivity {
     public static final String TAG = "DetailActivity";
-
-    // for startActivityForResult
-    private final int REQUEST_CODE = 10;
 
     Context context;
     Tweet tweet;
@@ -52,37 +51,68 @@ public class DetailActivity extends AppCompatActivity {
     ImageButton ibReply;
     ImageButton ibRetweet;
     ImageButton ibFavorite;
+    TabLayout tabLayout;
+    ViewPager2 viewPager2;
+    FragmentAdapter fragmentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        ActivityDetailBinding binding = ActivityDetailBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         // Find the toolbar view inside the activity layout
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         // Sets the Toolbar to act as the ActionBar for this Activity window.
         // Make sure the toolbar exists in the activity and is not null
         setSupportActionBar(toolbar);
 
-        ivProfileImage = findViewById(R.id.ivProfileImage);
-        tvBody = findViewById(R.id.tvBody);
-        tvScreenName = findViewById(R.id.tvScreenName);
-        tvHandle = findViewById(R.id.tvHandle);
-        tvTimestamp = findViewById(R.id.tvTimestamp);
-        tvDatestamp = findViewById(R.id.tvDatestamp);
-        tvRelativeTime = findViewById(R.id.tvRelativeTime);
-        ivMediaEntity = findViewById(R.id.ivMediaEntity);
-        tvRetweets = findViewById(R.id.tvRetweets);
-        tvLikes = findViewById(R.id.tvLikes);
-        ibFavorite = findViewById(R.id.ibFavorite);
-        ibRetweet = findViewById(R.id.ibRetweet);
-        ibReply = findViewById(R.id.ibReply);
+        ivProfileImage = binding.ivProfileImage;
+        tvBody = binding.tvBody;
+        tvScreenName = binding.tvScreenName;
+        tvHandle = binding.tvHandle;
+        tvTimestamp = binding.tvTimestamp;
+        tvDatestamp = binding.tvDatestamp;
+        tvRelativeTime = binding.tvRelativeTime;
+        ivMediaEntity = binding.ivMediaEntity;
+        tvRetweets = binding.tvRetweets;
+        tvLikes = binding.tvLikes;
+        ibFavorite = binding.ibFavorite;
+        ibRetweet = binding.ibRetweet;
+        ibReply = binding.ibReply;
+        viewPager2= binding.viewPager2;
+        tabLayout = binding.tabLayout;
 
         this.context = this;
 
         tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra("tweetObj"));
         tweetPosition = getIntent().getExtras().getInt(TWEET_POS);
 
-        // set the tweet details
+        FragmentManager fm = getSupportFragmentManager();
+        fragmentAdapter = new FragmentAdapter(fm, getLifecycle(), this, tweet.user);
+        viewPager2.setAdapter(fragmentAdapter);
+        tabLayout.addTab(tabLayout.newTab().setText("Followers"));
+        tabLayout.addTab(tabLayout.newTab().setText("Following"));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager2.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) { }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) { }
+        });
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                tabLayout.selectTab(tabLayout.getTabAt(position));
+            }
+        });
+
         tvBody.setText(tweet.body);
         tvScreenName.setText(tweet.user.name);
         tvHandle.setText("@"+tweet.user.screenName);
@@ -95,7 +125,7 @@ public class DetailActivity extends AppCompatActivity {
         Glide.with(context).load(tweet.user.profileImageUrl).circleCrop().into(ivProfileImage);
         Glide.with(context).load(tweet.mediaUrl).transform(new CenterInside(), new RoundedCornersTransformation(25, 5)).into(ivMediaEntity);
 
-        // make new client for favoriting and unfavoriting tweets
+        // make new client for replying, retweeting, unretweeting, favoriting, and unfavoriting tweets
         client = TwitterApp.getRestClient(this);
 
         if (tweet.retweeted) {
@@ -155,7 +185,6 @@ public class DetailActivity extends AppCompatActivity {
         ibRetweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final int oldRetweetCount = tweet.retweetCount;
                 // if I retweeted the tweet already
                 if (tweet.retweeted) {
                     // make API call to unretweet tweet
@@ -164,7 +193,7 @@ public class DetailActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
                             tweet.retweeted = false;
                             // decrement the number of retweets by 1
-                            tvRetweets.setText(String.format("%d Retweets", oldRetweetCount - 1));
+                            tvRetweets.setText(String.format("%d Retweets", tweet.retweetCount - 1));
                             //tweet.retweetCount = tweet.retweetCount -1;
                             // change the button to be stroke type
                             ibRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
@@ -180,7 +209,7 @@ public class DetailActivity extends AppCompatActivity {
                         public void onSuccess(int statusCode, Headers headers, JSON json) {
                             tweet.retweeted = true;
                             // increment the number of likes the user sees by 1
-                            tvRetweets.setText(String.format("%d Retweets", oldRetweetCount + 1));
+                            tvRetweets.setText(String.format("%d Retweets", tweet.retweetCount + 1));
                             // tweet.retweetCount = tweet.retweetCount + 1;
                             // change the button to be full
                             ibRetweet.setImageResource(R.drawable.ic_vector_retweet);

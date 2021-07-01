@@ -18,9 +18,7 @@ import com.github.scribejava.core.builder.api.BaseApi;
  *   https://github.com/scribejava/scribejava/tree/master/scribejava-apis/src/main/java/com/github/scribejava/apis
  * Key and Secret are provided by the developer site for the given API i.e dev.twitter.com
  * Add methods for each relevant endpoint in the API.
- * 
- * NOTE: You may want to rename this object based on the service i.e TwitterClient or FlickrClient
- * 
+ *
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final BaseApi REST_API_INSTANCE = TwitterApi.instance(); // Change this
@@ -43,7 +41,9 @@ public class TwitterClient extends OAuthBaseClient {
 				String.format(REST_CALLBACK_URL_TEMPLATE, context.getString(R.string.intent_host),
 						context.getString(R.string.intent_scheme), context.getPackageName(), FALLBACK_URL));
 	}
-	// DEFINE METHODS for different API endpoints here
+
+	//-------------------- DEFINE METHODS for different API endpoints here----------------------------------------//
+
 	public void getHomeTimeline(JsonHttpResponseHandler handler) {
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		// Can specify query string params directly or through RequestParams.
@@ -95,20 +95,37 @@ public class TwitterClient extends OAuthBaseClient {
 		client.post(apiUrl, params, "", handler);
 	}
 
-
 	public void retweet(long id, JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/retweet/"+ Long.toString(id));
-		// Can specify query string params directly or through RequestParams.
-		RequestParams params = new RequestParams();
-		client.post(apiUrl, params, "", handler);
-	}
-
-	public void unretweet(long id, JsonHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("statuses/unretweet.json");
+		String url = String.format("statuses/retweet/%s.json", id);
+		String apiUrl = getApiUrl(url);
 		// Can specify query string params directly or through RequestParams.
 		RequestParams params = new RequestParams();
 		params.put("in_reply_to_status_id", id);
 		client.post(apiUrl, params, "", handler);
+	}
+
+	public void unretweet(long id, JsonHttpResponseHandler handler) {
+		String url = String.format("statuses/unretweet/%s.json", id);
+		String apiUrl = getApiUrl(url);
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("in_reply_to_status_id", id);
+		client.post(apiUrl, params, "", handler);
+	}
+
+	public void getFollowers(String screenName, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("followers/list.json");
+		RequestParams params = new RequestParams();
+		params.put("screen_name", screenName);
+		client.get(apiUrl, params, handler);
+	}
+
+	// this API method call is to get the list of people that the user is following (the API calls it "friends")
+	public void getFriends(String screenName, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("friends/list.json");
+		RequestParams params = new RequestParams();
+		params.put("screen_name", screenName);
+		client.get(apiUrl, params, handler);
 	}
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint

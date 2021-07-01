@@ -6,6 +6,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="android:windowContentTransitions">true</item>
         <!-- change status bar color -->
         <item name="colorPrimaryDark">#ff1da1f2</item>
         <!-- change navigation bar color -->
