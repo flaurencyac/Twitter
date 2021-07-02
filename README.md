@@ -49,6 +49,10 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
+<img src='https://github.com/flaurencyac/GIFs/blob/master/BetterQuality.gif' title='First High Quality Video Walkthrough' width='' alt='Video Walkthrough' />
+
+<img src='https://github.com/flaurencyac/GIFs/blob/master/extraTwitterGif.gif' title='Second High Quality Video Walkthrough' width='' alt='Video Walkthrough' />
+
 <img src='https://github.com/flaurencyac/Twitter/blob/main/Twitter.gif' title='First Video Walkthrough' width='' alt='Video Walkthrough' />
 
 <img src='https://github.com/flaurencyac/Twitter/blob/main/extra.gif' title='Second Video Walkthrough' width='' alt='Video Walkthrough' />
